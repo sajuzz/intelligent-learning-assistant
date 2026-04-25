@@ -10,6 +10,7 @@
 ## 🚀 Key Features
 
 - **Multi-Disciplinary**: Learn ML, Quantum Physics, Web Dev, and more in one place.
+- **Document Mode (Beta)**: Lightweight semantic retrieval for structured documents.
 - **On-Device NLP**: Uses `Transformers.js` to run a `MobileBERT` model directly in your browser. No server required.
 - **Adaptive Logic**: Automatically shifts between Basic and Advanced modules based on your interactions.
 - **Zero-Dependency Hosting**: A single optimized HTML file that can be hosted anywhere (GitHub Pages, Vercel, or local).
