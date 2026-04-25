@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IntelliLearn | Universal Adaptive AI</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        :root {
+            --bg-dark: #0a0b10;
+            --sidebar-bg: #11131c;
+            --accent: #00d4ff;
+            --accent-purple: #7c4dff;
+            --accent-glow: rgba(0, 212, 255, 0.3);
+            --text-main: #e0e0e6;
+            --text-dim: #9499b3;
+            --glass: rgba(255, 255, 255, 0.03);
+            --glass-border: rgba(255, 255, 255, 0.08);
+            --success: #00e676;
+            --warning: #ffab40;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Outfit', sans-serif;
+            background-color: var(--bg-dark);
+            color: var(--text-main);
+            height: 100vh;
+            overflow: hidden;
+            display: flex;
+        }
+
+        #app { display: flex; width: 100%; height: 100%; }
+
+        /* Sidebar */
+        .sidebar {
+            width: 280px;
+            background-color: var(--sidebar-bg);
+            border-right: 1px solid var(--glass-border);
+            display: flex;
+            flex-direction: column;
+            padding: 2rem 1.5rem;
+            z-index: 10;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            margin-bottom: 3rem;
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--accent);
+            cursor: pointer;
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 0.85rem 1rem;
+            border-radius: 12px;
+            color: var(--text-dim);
+            margin-bottom: 0.5rem;
+            transition: 0.3s;
+        }
+
+        .nav-item.active { background: var(--glass); color: var(--text-main); box-shadow: inset 0 0 0 1px var(--glass-border); }
+
+        /* Main Content */
+        .content-canvas {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            padding: 2rem 3rem;
+            overflow-y: auto;
+            background: radial-gradient(circle at top right, rgba(0, 212, 255, 0.05), transparent);
+        }
+
+        .canvas-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 3rem;
+        }
+
+        .topic-info h1 {
+            font-size: 2.25rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, #fff, var(--accent));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        /* Subject Grid */
+        .subject-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 2rem;
+            animation: fadeIn 0.8s ease;
+        }
+
+        .subject-card {
+            background: var(--glass);
+            border: 1px solid var(--glass-border);
+            border-radius: 24px;
+            padding: 2rem;
+            cursor: pointer;
+            transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .subject-card:hover {
+            transform: translateY(-5px);
+            border-color: var(--accent);
+            background: rgba(0, 212, 255, 0.05);
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+        }
+
+        .subject-card i { color: var(--accent); width: 32px; height: 32px; }
+
+        /* Learning Card */
+        .learning-card {
+            background: var(--glass);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--glass-border);
+            border-radius: 24px;
+            padding: 2.5rem;
+            max-width: 800px;
+            animation: slideUp 0.6s ease;
+        }
+
+        .learning-card h2 { margin-bottom: 1.5rem; font-size: 1.75rem; }
+        .learning-card p { line-height: 1.7; font-size: 1.1rem; margin-bottom: 1.5rem; color: var(--text-main); }
+
+        .quiz-option {
+            display: block; width: 100%; padding: 1.25rem; margin-bottom: 0.75rem;
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid var(--glass-border);
+            border-radius: 12px;
+            text-align: left; color: var(--text-main);
+            cursor: pointer; transition: 0.2s;
+        }
+
+        .quiz-option:hover { border-color: var(--accent); background: rgba(0, 212, 255, 0.1); }
+
+        /* Interaction */
+        .interaction-bar {
+            margin-top: auto;
+            padding: 1.5rem 0;
+            display: flex;
+            gap: 1rem;
+            border-top: 1px solid var(--glass-border);
+        }
+
+        input[type="text"] {
+            flex: 1; background: var(--glass); border: 1px solid var(--glass-border);
+            border-radius: 12px; padding: 1rem; color: #fff; outline: none;
+        }
+
+        .btn-send {
+            width: 50px; height: 50px; border-radius: 12px; background: var(--accent);
+            color: #000; display: flex; align-items: center; justify-content: center;
+            border: none; cursor: pointer;
+        }
+
+        /* Status */
+        .status-badge {
+            margin-top: auto; padding: 1rem; background: var(--glass); border-radius: 12px;
+            font-size: 0.8rem; display: flex; align-items: center; gap: 0.5rem;
+        }
+
+        .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--warning); }
+        .dot.ready { background: var(--success); box-shadow: 0 0 10px var(--success); }
+
+        @keyframes slideUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        .hidden { display: none !important; }
+    </style>
+</head>
+<body>
+    <div id="app">
+        <aside class="sidebar">
+            <div class="logo" onclick="location.reload()">
+                <i data-lucide="brain-circuit"></i>
+                <span>IntelliLearn</span>
+            </div>
+            <div id="nav-container" class="progress-nav">
+                <!-- Nav items injected -->
+            </div>
+            <div class="status-badge">
+                <span id="ml-dot" class="dot"></span>
+                <span id="ml-text">AI Initializing...</span>
+            </div>
+        </aside>
+
+        <main class="content-canvas">
+            <header class="canvas-header">
+                <div>
+                    <h1 id="main-title">Select a Subject</h1>
+                    <p id="sub-title">What would you like to master today?</p>
+                </div>
+            </header>
+
+            <div id="main-view">
+                <!-- Subject grid or Learning card injected -->
+                <div class="subject-grid" id="subject-grid"></div>
+            </div>
+
+            <div id="interaction-area" class="interaction-bar hidden">
+                <input type="text" id="user-input" placeholder="Talk to your assistant (e.g., 'Too hard', 'Ready for more')...">
+                <button class="btn-send" id="send-btn"><i data-lucide="send"></i></button>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        const DATA = {
+            "subjects": [
+                {
+                    "id": "ml", "title": "Machine Learning", "icon": "brain", "desc": "Neural networks and data patterns.",
+                    "topics": [
+                        { "t": "Neural Networks", "l": { 
+                            "beg": { "c": "Neural networks are digital brains that learn by example.", "q": "How do they learn?", "a": ["Examples", "Rules"], "ok": 0 },
+                            "adv": { "c": "Deep Learning uses backpropagation to optimize weights.", "q": "What optimizes weights?", "a": ["Backpropagation", "Hardcoding"], "ok": 0 }
+                        }}
+                    ]
+                },
+                {
+                    "id": "quantum", "title": "Quantum Physics", "icon": "atom", "desc": "The behavior of subatomic matter.",
+                    "topics": [
+                        { "t": "Entanglement", "l": { 
+                            "beg": { "c": "Particles remain connected across any distance.", "q": "Does distance stop it?", "a": ["Yes", "No"], "ok": 1 }
+                        }}
+                    ]
+                },
+                {
+                    "id": "web", "title": "Web Architecture", "icon": "globe", "desc": "How the modern internet functions.",
+                    "topics": [
+                        { "t": "Client-Server", "l": { 
+                            "beg": { "c": "Browsers (Clients) request data from Servers.", "q": "Who requests?", "a": ["Client", "Server"], "ok": 0 }
+                        }}
+                    ]
+                }
+            ]
+        };
+
+        class App {
+            constructor() {
+                this.subject = null;
+                this.topicIdx = 0;
+                this.level = 'beg';
+                this.classifier = null;
+                this.init();
+            }
+
+            async init() {
+                lucide.createIcons();
+                this.renderGrid();
+                this.loadML();
+                document.getElementById('send-btn').onclick = () => this.handleFeedback();
+                document.getElementById('user-input').onkeypress = (e) => e.key === 'Enter' && this.handleFeedback();
+            }
+
+            async loadML() {
+                try {
+                    const { pipeline } = await import('https://cdn.jsdelivr.net/npm/@xenova/transformers@2.17.1');
+                    this.classifier = await pipeline('zero-shot-classification', 'Xenova/mobilebert-uncased-mnli', {
+                        dtype: 'q4',
+                        progress_callback: (d) => {
+                            if (d.status === 'progress') document.getElementById('ml-text').textContent = `AI Loading: ${Math.round(d.progress)}%`;
+                        }
+                    });
+                    document.getElementById('ml-dot').classList.add('ready');
+                    document.getElementById('ml-text').textContent = "AI Ready";
+                } catch (e) {
+                    document.getElementById('ml-text').textContent = "AI Offline (Rules)";
+                }
+            }
+
+            renderGrid() {
+                const grid = document.getElementById('subject-grid');
+                grid.innerHTML = DATA.subjects.map(s => `
+                    <div class="subject-card" onclick="app.selectSubject('${s.id}')">
+                        <i data-lucide="${s.icon}"></i>
+                        <h3>${s.title}</h3>
+                        <p>${s.desc}</p>
+                    </div>
+                `).join('');
+                lucide.createIcons();
+            }
+
+            selectSubject(id) {
+                this.subject = DATA.subjects.find(s => s.id === id);
+                document.getElementById('subject-grid').classList.add('hidden');
+                document.getElementById('interaction-area').classList.remove('hidden');
+                document.getElementById('sub-title').textContent = this.subject.desc;
+                this.renderContent();
+            }
+
+            renderContent() {
+                const topic = this.subject.topics[this.topicIdx];
+                const module = topic.l[this.level] || topic.l['beg'];
+                
+                document.getElementById('main-title').textContent = topic.t;
+                document.getElementById('main-view').innerHTML = `
+                    <div class="learning-card">
+                        <h2>${topic.t} - ${this.level === 'beg' ? 'Basics' : 'Advanced'}</h2>
+                        <p>${module.c}</p>
+                        <div style="border-top:1px solid var(--glass-border); padding-top:1.5rem">
+                            <p style="font-weight:600; margin-bottom:1rem">Check: ${module.q}</p>
+                            ${module.a.map((opt, i) => `
+                                <button class="quiz-option" onclick="app.check(${i}, ${module.ok})">${opt}</button>
+                            `).join('')}
+                        </div>
+                    </div>
+                `;
+            }
+
+            check(idx, ok) {
+                const card = document.querySelector('.learning-card');
+                const msg = document.createElement('p');
+                msg.style.marginTop = '1rem';
+                msg.style.fontWeight = 'bold';
+                msg.style.color = idx === ok ? 'var(--success)' : 'var(--warning)';
+                msg.textContent = idx === ok ? "✓ Correct!" : "× Let's try again.";
+                card.appendChild(msg);
+            }
+
+            async handleFeedback() {
+                const val = document.getElementById('user-input').value;
+                if (!val) return;
+                document.getElementById('user-input').value = '';
+                
+                let action = 'next';
+                if (this.classifier) {
+                    const res = await this.classifier(val, ['confused', 'ready', 'bored']);
+                    if (res.labels[0] === 'confused') action = 'back';
+                } else {
+                    if (val.toLowerCase().includes('hard')) action = 'back';
+                }
+
+                if (action === 'next') {
+                    if (this.level === 'beg' && this.subject.topics[this.topicIdx].l['adv']) this.level = 'adv';
+                    else { this.topicIdx = (this.topicIdx + 1) % this.subject.topics.length; this.level = 'beg'; }
+                } else {
+                    this.level = 'beg';
+                }
+                this.renderContent();
+            }
+        }
+
+        const app = new App();
+    </script>
+</body>
+</html>

@@ -1,0 +1,55 @@
+{
+  "subjects": [
+    {
+      "id": "ml",
+      "title": "Machine Learning",
+      "icon": "brain",
+      "description": "Understand how computers learn from data.",
+      "topics": [
+        {
+          "title": "Neural Networks",
+          "levels": {
+            "beginner": {
+              "content": "A Neural Network is like a digital brain that learns by example.",
+              "quiz": { "q": "How does it learn?", "a": ["Examples", "Rules"], "correct": 0 }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": "quantum",
+      "title": "Quantum Physics",
+      "icon": "atom",
+      "description": "The strange world of subatomic particles.",
+      "topics": [
+        {
+          "title": "Entanglement",
+          "levels": {
+            "beginner": {
+              "content": "Quantum entanglement is when two particles become connected so that the state of one instantly influences the other, no matter the distance.",
+              "quiz": { "q": "Does distance matter in entanglement?", "a": ["Yes", "No"], "correct": 1 }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": "web",
+      "title": "Web Architecture",
+      "icon": "globe",
+      "description": "How the modern internet works.",
+      "topics": [
+        {
+          "title": "Client-Server Model",
+          "levels": {
+            "beginner": {
+              "content": "The internet works by a Client (your browser) asking a Server (a computer far away) for information.",
+              "quiz": { "q": "Who initiates the request?", "a": ["Client", "Server"], "correct": 0 }
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

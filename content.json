@@ -1,0 +1,48 @@
+{
+  "topics": [
+    {
+      "id": "intro",
+      "title": "Welcome to Neural Networks",
+      "levels": {
+        "beginner": {
+          "content": "Think of a Neural Network as a digital brain. Just like your brain has neurons connected to each other, a computer has artificial neurons that pass signals. They learn by looking at thousands of examples, like seeing many photos of cats until they know what a cat looks like.",
+          "quiz": {
+            "question": "What is the primary way a Neural Network learns?",
+            "options": ["By following a fixed list of rules", "By looking at many examples", "By manual programming for every cat"],
+            "answer": 1
+          }
+        },
+        "intermediate": {
+          "content": "A Neural Network consists of layers: Input, Hidden, and Output. Signals pass through connections with 'weights' that determine how important a signal is. Learning involves adjusting these weights to minimize errors using a process called Backpropagation.",
+          "quiz": {
+            "question": "What component determines the strength of a signal between neurons?",
+            "options": ["The Layer ID", "The Neuron Name", "The Weights"],
+            "answer": 2
+          }
+        },
+        "advanced": {
+          "content": "Deep Neural Networks leverage non-linear activation functions (like ReLU or Sigmoid) to model complex patterns. They optimize a cost function using Gradient Descent, where the 'learning rate' controls the step size towards the global minimum of the error surface.",
+          "quiz": {
+            "question": "What role do non-linear activation functions play?",
+            "options": ["They speed up the computer", "They allow the model to learn complex, non-straight patterns", "They delete incorrect neurons"],
+            "answer": 1
+          }
+        }
+      }
+    },
+    {
+      "id": "concepts",
+      "title": "Core Architectures",
+      "levels": {
+        "beginner": {
+          "content": "Not all neural networks are the same! Some are great at 'seeing' (CNNs), while others are great at 'listening' or 'reading' (RNNs). It's like having different specialists for different jobs.",
+          "quiz": {
+            "question": "Which type of network is usually best for analyzing images?",
+            "options": ["CNN (Convolutional)", "RNN (Recurrent)", "Simple Spreadsheet"],
+            "answer": 0
+          }
+        }
+      }
+    }
+  ]
+}
