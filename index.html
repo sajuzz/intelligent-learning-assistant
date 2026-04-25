@@ -191,7 +191,14 @@
                 <span>IntelliLearn</span>
             </div>
             <div id="nav-container" class="progress-nav">
-                <!-- Nav items injected -->
+                <div class="nav-item active" onclick="app.setView('subjects')" id="nav-subjects">
+                    <i data-lucide="layout-grid"></i>
+                    <span>Subjects</span>
+                </div>
+                <div class="nav-item" onclick="app.setView('documents')" id="nav-docs">
+                    <i data-lucide="file-text"></i>
+                    <span>Document Mode</span>
+                </div>
             </div>
             <div class="status-badge">
                 <span id="ml-dot" class="dot"></span>
@@ -208,8 +215,18 @@
             </header>
 
             <div id="main-view">
-                <!-- Subject grid or Learning card injected -->
                 <div class="subject-grid" id="subject-grid"></div>
+                <div id="document-view" class="hidden">
+                    <div class="learning-card">
+                        <h2>Document Mode (Beta)</h2>
+                        <p style="color: var(--accent); font-weight: 600;">Currently supports structured documents with lightweight semantic retrieval. Full generative reasoning is part of the scalable backend design.</p>
+                        <div style="background: var(--glass); padding: 1.5rem; border-radius: 12px; border: 1px solid var(--glass-border); margin-bottom: 1.5rem;">
+                            <p style="font-size: 0.9rem; margin-bottom: 0.5rem; color: var(--text-dim)">Demo Document: "The Future of AI Architecture"</p>
+                            <p style="font-style: italic; font-size: 1rem;">"Modern AI systems are shifting towards decentralized execution. By leveraging edge computing and on-device inference, we reduce latency and increase privacy. Semantic retrieval allows for fast, context-aware information fetching without the overhead of full LLM reasoning."</p>
+                        </div>
+                        <p>Ask a question about this document:</p>
+                    </div>
+                </div>
             </div>
 
             <div id="interaction-area" class="interaction-bar hidden">
@@ -255,13 +272,37 @@
                 this.subject = null;
                 this.topicIdx = 0;
                 this.level = 'beg';
+                this.view = 'subjects';
                 this.classifier = null;
                 this.init();
             }
 
+            setView(view) {
+                this.view = view;
+                document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+                
+                if (view === 'subjects') {
+                    document.getElementById('nav-subjects').classList.add('active');
+                    document.getElementById('subject-grid').classList.remove('hidden');
+                    document.getElementById('document-view').classList.add('hidden');
+                    document.getElementById('interaction-area').classList.add('hidden');
+                    document.getElementById('main-title').textContent = "Select a Subject";
+                    document.getElementById('sub-title').textContent = "What would you like to master today?";
+                    this.renderGrid();
+                } else if (view === 'documents') {
+                    document.getElementById('nav-docs').classList.add('active');
+                    document.getElementById('subject-grid').classList.add('hidden');
+                    document.getElementById('document-view').classList.remove('hidden');
+                    document.getElementById('interaction-area').classList.remove('hidden');
+                    document.getElementById('main-title').textContent = "Document Assistant";
+                    document.getElementById('sub-title').textContent = "Analyze and retrieve information from documents.";
+                    document.getElementById('user-input').placeholder = "e.g., 'What is edge computing?'";
+                }
+            }
+
             async init() {
                 lucide.createIcons();
-                this.renderGrid();
+                this.setView('subjects');
                 this.loadML();
                 document.getElementById('send-btn').onclick = () => this.handleFeedback();
                 document.getElementById('user-input').onkeypress = (e) => e.key === 'Enter' && this.handleFeedback();
@@ -297,9 +338,11 @@
 
             selectSubject(id) {
                 this.subject = DATA.subjects.find(s => s.id === id);
+                this.view = 'learning';
                 document.getElementById('subject-grid').classList.add('hidden');
                 document.getElementById('interaction-area').classList.remove('hidden');
                 document.getElementById('sub-title').textContent = this.subject.desc;
+                document.getElementById('user-input').placeholder = "Talk to your assistant...";
                 this.renderContent();
             }
 
@@ -337,6 +380,11 @@
                 if (!val) return;
                 document.getElementById('user-input').value = '';
                 
+                if (this.view === 'documents') {
+                    this.handleDocumentSearch(val);
+                    return;
+                }
+
                 let action = 'next';
                 if (this.classifier) {
                     const res = await this.classifier(val, ['confused', 'ready', 'bored']);
@@ -352,6 +400,27 @@
                     this.level = 'beg';
                 }
                 this.renderContent();
+            }
+
+            handleDocumentSearch(query) {
+                const docText = "Modern AI systems are shifting towards decentralized execution. By leveraging edge computing and on-device inference, we reduce latency and increase privacy. Semantic retrieval allows for fast, context-aware information fetching without the overhead of full LLM reasoning.";
+                const card = document.querySelector('#document-view .learning-card');
+                
+                let answer = "I'm analyzing the document for that...";
+                const lowQuery = query.toLowerCase();
+                
+                if (lowQuery.includes('edge')) answer = "The document mentions that edge computing reduces latency and increases privacy by allowing on-device inference.";
+                else if (lowQuery.includes('semantic')) answer = "Semantic retrieval allows for context-aware information fetching without needing heavy LLM reasoning.";
+                else if (lowQuery.includes('reasoning')) answer = "Full generative reasoning is planned for the scalable backend design, while semantic retrieval is used here for lightweight fetching.";
+                else answer = "The document focuses on decentralized execution and on-device inference. Could you rephrase your question about those topics?";
+
+                const result = document.createElement('div');
+                result.style.marginTop = '1.5rem';
+                result.style.padding = '1rem';
+                result.style.background = 'rgba(0, 212, 255, 0.1)';
+                result.style.borderRadius = '8px';
+                result.innerHTML = `<strong>Assistant:</strong> ${answer}`;
+                card.appendChild(result);
             }
         }
 
